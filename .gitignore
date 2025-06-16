@@ -1,3 +1,8 @@
+.bsp
+.idea
+
+out
+
 *.class
 *.log
 

@@ -3,7 +3,8 @@ package ai.guidoch.llm.google
 import ai.guidoch.llm.LLMClient
 import ai.guidoch.llm.model.{LLMResponse, Prompt, TokenUsage}
 import cats.effect.IO
-import sttp.client3.*
+import sttp.client4.*
+import sttp.client4.httpclient.HttpClientSyncBackend
 import upickle.default.*
 
 /**

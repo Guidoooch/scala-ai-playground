@@ -4,7 +4,8 @@ import ai.guidoch.llm.EmbeddingModel
 import ai.guidoch.llm.model.Embedding
 import cats.effect.IO
 import cats.implicits.toTraverseOps
-import sttp.client3.*
+import sttp.client4.*
+import sttp.client4.httpclient.HttpClientSyncBackend
 import upickle.default.*
 
 /** Implementation of EmbeddingModel for Google's Gemini models

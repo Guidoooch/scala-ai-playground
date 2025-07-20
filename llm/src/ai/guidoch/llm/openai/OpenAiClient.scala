@@ -5,8 +5,9 @@ import ai.guidoch.llm.model.{LLMResponse, Prompt, TokenUsage}
 import cats.effect.IO
 import io.circe.generic.auto.*
 import io.circe.syntax.*
-import sttp.client3.*
-import sttp.client3.circe.*
+import sttp.client4.*
+import sttp.client4.circe.*
+import sttp.client4.httpclient.HttpClientSyncBackend
 import sttp.model.Uri
 import upickle.default.*
 

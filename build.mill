@@ -27,8 +27,9 @@ trait MyScalaModule extends MyModule with ScalaModule {
     ivy"com.google.genai:google-genai:1.4.1",
     ivy"com.lihaoyi::scalatags:0.13.1",
     ivy"com.lihaoyi::upickle:3.2.0",                 // JSON processing
-    ivy"com.softwaremill.sttp.client3::circe:3.9.5", // STTP JSON support
-    ivy"com.softwaremill.sttp.client3::core:3.9.5",  // HTTP client for API interactions
+    ivy"com.softwaremill.sttp.client4::circe:4.0.9", // STTP JSON support
+    ivy"com.softwaremill.sttp.client4::core:4.0.9",  // HTTP client for API interactions
+    ivy"com.softwaremill.sttp.client4::cats:4.0.9",
     ivy"io.circe::circe-core:0.14.6",
     ivy"io.circe::circe-generic:0.14.6",
     ivy"org.apache.commons:commons-text:1.11.0", // Text processing utilities
@@ -45,6 +46,11 @@ trait MyScalaModule extends MyModule with ScalaModule {
 trait CommonModule extends MyScalaModule
 
 object llm extends MyScalaModule {
+
+  override def scalaVersion: T[String] = Versions.Scala
+}
+
+object finance extends MyScalaModule {
 
   override def scalaVersion: T[String] = Versions.Scala
 }

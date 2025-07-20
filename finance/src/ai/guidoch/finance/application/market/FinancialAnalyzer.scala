@@ -1,7 +1,7 @@
 package ai.guidoch.finance.application.market
 
 import ai.guidoch.finance.application.news.NewsAnalyzer
-import ai.guidoch.finance.domain.market.{MarketCrash, MarketData, MarketPrediction}
+import ai.guidoch.finance.domain.market.{MarketCrash, MarketPrediction}
 import ai.guidoch.finance.infrastructure.market.client.marketstack.MarketStackClient
 import cats.effect.IO
 
@@ -14,8 +14,11 @@ class FinancialAnalyzer {
   private val newsAnalyzer     = new NewsAnalyzer()
   private val predictor        = new MarketPredictor()
 
+  private val to   = OffsetDateTime.now()
+  private val from = to.minusYears(10)
+
   def analyzeMarket(symbol: String): IO[AnalysisReport] = for
-    marketData <- marketDataClient.fetchMarketData(symbol)
+    marketData <- marketDataClient.fetchMarketData(symbol, from, to)
     news       <- newsAnalyzer.fetchNewsData(symbol)
   yield
     val crashes    = crashDetector.detectCrashes(marketData)

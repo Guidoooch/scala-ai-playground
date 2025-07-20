@@ -8,7 +8,7 @@ class CrashDetector {
 
   def detectCrashes(
       data: Seq[MarketData],
-      crashThreshold: Double = -0.20, // 20% decline
+      crashThreshold: Double = -0.10, // 20% decline
       minDuration: Int = 5
   ): Seq[MarketCrash] = {
 
@@ -16,10 +16,10 @@ class CrashDetector {
     val drawdowns = TechnicalIndicators.calculateDrawdown(prices)
     val crashes   = ArrayBuffer[MarketCrash]()
 
-    var inCrash                 = false
-    var crashStart: Option[Int] = None
-    var peakPrice               = 0.0
-    var peakIndex               = 0
+    var inCrash    = false
+    var crashStart = Option.empty[Int]
+    var peakPrice  = 0.0
+    var peakIndex  = 0
 
     for ((drawdown, index) <- drawdowns.zipWithIndex) {
       if (!inCrash && drawdown <= crashThreshold) {

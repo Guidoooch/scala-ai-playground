@@ -5,17 +5,17 @@ import cats.effect.{ExitCode, IO, IOApp}
 
 /** Main application to demonstrate the usage of the LLM integration system
   */
-object Main extends IOApp {
+object Main extends IOApp:
 
-  override def run(args: List[String]): IO[ExitCode] = {
+  override def run(args: List[String]): IO[ExitCode] =
     // Check if API key is provided
     val apiKey = sys.env.getOrElse("GOOGLE_API_KEY", "")
 
-    if (apiKey.isEmpty) {
+    if apiKey.isEmpty then
       IO.println("Error: API_KEY environment variable is not set.") >>
       IO.println("Please set it to your OpenAI API key and try again.") >>
       IO.pure(ExitCode.Error)
-    } else {
+    else
       // Create the RAG system
       val llmModel  = "gemini-2.5-pro-preview-06-05"
       val ragSystem = GeminiRAGSystem.create(apiKey, llmModel)
@@ -30,7 +30,7 @@ object Main extends IOApp {
       )
 
       // Add the documents to the RAG system
-      for {
+      for
         _ <- IO.println("Initializing RAG system...")
         _ <- LLMComposer.addTextsToRAG(ragSystem, documents)
         _ <- IO.println("Documents added to the knowledge base.")
@@ -56,8 +56,5 @@ object Main extends IOApp {
 
         _ <- // Query outside the knowledge base
           LLMComposer.queryAndPrint(ragSystem, "What is the capital of France?")
-
-      } yield ExitCode.Success
-    }
-  }
-}
+      yield
+        ExitCode.Success

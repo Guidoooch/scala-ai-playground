@@ -5,14 +5,14 @@ import cats.effect.{ExitCode, IO, IOApp}
 
 /** Main application to demonstrate the usage of the LLM integration system
   */
-object Main extends IOApp {
+object LLMApp extends IOApp {
 
   override def run(args: List[String]): IO[ExitCode] = {
     // Check if API key is provided
-    val apiKey = sys.env.getOrElse("GOOGLE_API_KEY", "")
+    val apiKey = sys.env.getOrElse("GOOGLE_API_KEY", "AIzaSyBHzhgVvuLXEZjo6M_aDE84JvS2u8bOdvY")
 
     if (apiKey.isEmpty) {
-      IO.println("Error: OPENAI_API_KEY environment variable is not set.") >>
+      IO.println("Error: API_KEY environment variable is not set.") >>
       IO.println("Please set it to your OpenAI API key and try again.") >>
       IO.pure(ExitCode.Error)
     } else {

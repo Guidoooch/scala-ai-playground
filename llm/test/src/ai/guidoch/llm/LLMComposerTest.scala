@@ -6,6 +6,7 @@ import cats.effect.unsafe.implicits.global
 import utest.*
 
 object LLMComposerTest extends TestSuite {
+  
   val tests: Tests = Tests {
     test("LLMComposer should create RAG systems") {
       // Test OpenAi RAG system creation

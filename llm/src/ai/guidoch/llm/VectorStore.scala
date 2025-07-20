@@ -2,10 +2,11 @@ package ai.guidoch.llm
 
 import ai.guidoch.llm.model.{Document, Embedding}
 import cats.effect.IO
-import cats.effect.unsafe.IORuntime
 import com.github.jelmerk.knn.DistanceFunctions
+import com.github.jelmerk.knn.hnsw.*
+import com.github.jelmerk.knn.scalalike.*
 
-import java.lang
+import java.util.UUID
 import scala.jdk.CollectionConverters.ListHasAsScala
 
 /** Interface for vector stores that can store and retrieve embeddings
@@ -76,18 +77,13 @@ object VectorStore {
       embeddingModel: EmbeddingModel,
       dimensions: Int
   ) extends VectorStore {
-    import com.github.jelmerk.knn.hnsw.*
-    import com.github.jelmerk.knn.scalalike.*
-
-    import java.util.UUID
 
     // Item class for the HNSW index
     private case class IndexItem(id: String, vector: Array[Float], document: Document, dimensions: Int)
-      extends Item[String, Array[Float]] {
-    }
+        extends Item[String, Array[Float]] {}
 
     // Create the HNSW index
-    private val index: HnswIndex[String, Array[Float], IndexItem, lang.Float] =
+    private val index: HnswIndex[String, Array[Float], IndexItem, java.lang.Float] =
       HnswIndex
         .newBuilder(dimensions, DistanceFunctions.FLOAT_COSINE_DISTANCE, 1000)
         .build[String, IndexItem]()
@@ -95,19 +91,18 @@ object VectorStore {
     // Map to store documents by ID
     private val documents = scala.collection.mutable.Map[String, Document]()
 
-    override def addDocument(document: Document): IO[String] = for {
+    override def addDocument(document: Document): IO[String] = for
       // Generate an ID if not provided
-      id <- IO.pure {
+      id <- IO.pure:
         if document.id.nonEmpty then document.id
         else UUID.randomUUID().toString
-      }
 
       // Get or generate embedding
-      docWithEmbedding <- document.embedding match {
-        case Some(_) => IO.pure(document.copy(id = id))
+      docWithEmbedding <- document.embedding match
         case None =>
           embeddingModel.embed(document.content).map(embedding => document.copy(id = id, embedding = Some(embedding)))
-      }
+
+        case _ => IO.pure(document.copy(id = id))
 
       _ = {
         // Add to index
@@ -122,17 +117,15 @@ object VectorStore {
 
       // Store in map
       _ = documents(id) = docWithEmbedding
+    yield id
 
-    } yield id
-
-    override def addDocuments(documents: Seq[Document]): IO[Seq[String]] = IO {
-      documents.map(doc => addDocument(doc).unsafeRunSync()(using IORuntime.global))
-    }
+    override def addDocuments(documents: Seq[Document]): IO[Seq[String]] =
+      IO.parTraverseN(1)(documents)(doc => addDocument(doc))
 
     override def search(
         query: Embedding,
         limit: Int
-    ): IO[Seq[(Document, Float)]] = IO {
+    ): IO[Seq[(Document, Float)]] = IO:
       // Create a dummy item for the query
       val queryItem = IndexItem(
         id = "query",
@@ -145,18 +138,18 @@ object VectorStore {
       val results = index.findNearest(queryItem.vector, limit)
 
       // Convert to (Document, Float) pairs
-      results.asScala.map { case SearchResult(item, distance) =>
-        (item.document, 1f - distance) // Convert distance to similarity
-      }.toSeq
-    }
+      results.asScala
+        .map:
+          case SearchResult(item, distance) => (item.document, 1f - distance) // Convert distance to similarity
+        .toSeq
 
     override def searchByText(
         queryText: String,
         limit: Int
     ): IO[Seq[(Document, Float)]] =
-      for {
+      for
         embedding <- embeddingModel.embed(queryText)
-        results <- search(embedding, limit)
-      } yield results
+        results   <- search(embedding, limit)
+      yield results
   }
 }

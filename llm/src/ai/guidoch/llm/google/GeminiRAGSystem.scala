@@ -2,8 +2,6 @@ package ai.guidoch.llm.google
 
 import ai.guidoch.llm.{RAGSystem, VectorStore}
 
-import java.util.Optional
-
 object GeminiRAGSystem:
 
   /** Create a RAG system using Google Gemini
